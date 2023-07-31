@@ -1,0 +1,61 @@
+local size = vmath.vector3(100, 100, 0)
+
+local WINDOW_X = 1000
+local WINDOW_Y = 1000
+
+local dynamic_height = false
+
+function init(self)
+    gui.set_enabled(gui.get_node("root"), false)
+    size = gui.get_size(gui.get_node("hint"))
+end
+
+local function set_position(pos)
+    local hint_pos = vmath.vector3(0)
+    hint_pos.x = pos.x + size.x/2
+    hint_pos.y = pos.y + size.y/2
+    if hint_pos.x + size.x/2 > WINDOW_X then
+        hint_pos.x = pos.x - size.x/2
+    end
+    if hint_pos.y + size.y/2 > WINDOW_Y then
+        hint_pos.y = pos.y - size.y/2
+    end
+    gui.set_position(gui.get_node("root"), hint_pos)
+end
+
+local function set_size(new_size)
+    gui.set_size(gui.get_node("hint"), new_size)
+    gui.set_size(gui.get_node("hint_text"), vmath.vector3(new_size.x - 20 , new_size.y - 20, 0))
+    gui.set_size(gui.get_node("nested_hint"), vmath.vector3(new_size.x / 10 , new_size.y / 10, 0))
+    gui.set_position(gui.get_node("hint_text"), vmath.vector3(-new_size.x/2 + 10, new_size.y/2 - 10, 0))
+    gui.set_position(gui.get_node("nested_hint"), vmath.vector3(new_size.x/2 - new_size.x/10, -new_size.y/2 + new_size.y/10, 0))
+    size = new_size
+end
+
+local function set_text(text)
+    gui.set_text(gui.get_node("hint_text"), text)
+    if dynamic_height then
+        local text_metrics = gui.get_text_metrics_from_node(gui.get_node("hint_text"))
+        local new_size = vmath.vector3(size.x, text_metrics.height + 20, 0)
+        set_size(new_size)
+    end
+end
+
+function on_message(self, message_id, message, sender)
+    if message_id == hash("show") then
+        if message.size then
+            set_size(message.size)
+        end
+        if message.dynamic_height then
+            dynamic_height = message.dynamic_height
+        end
+        set_text(message.text)
+        set_position(message.pos)
+        gui.set_enabled(gui.get_node("root"), true)
+    elseif message_id == hash("hide") then
+        gui.set_enabled(gui.get_node("root"), false)
+    elseif message_id == hash("delete") then
+        print(2)
+        gui.delete_node(gui.get_node("root"))
+    end
+end
