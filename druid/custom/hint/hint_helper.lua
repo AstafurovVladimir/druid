@@ -27,6 +27,7 @@ function M.on_over(self, action_id, action, node, data)
                 msg.post(M.hints[i][hash("/hint")], "update", {layer = i, data = node})
             end
             msg.post(M.hints[1][hash("/hint")], "show")
+            msg.post(M.hints[1][hash("/hint")], "acquire_input_focus")
             M.hint_is_show = true
             M.current_node_id = gui.get_id(node)
             return
@@ -41,6 +42,7 @@ end
 
 function M.show_nest(self, level)
     msg.post(M.hints[level][hash("/hint")], "show")
+    msg.post(M.hints[level][hash("/hint")], "acquire_input_focus")
 end
 
 function M.final()

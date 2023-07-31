@@ -4,6 +4,9 @@ local WINDOW_X = 1000
 local WINDOW_Y = 1000
 
 local dynamic_height = false
+local enabled = false
+local layer = 1
+local source = nil
 
 function init(self)
     gui.set_enabled(gui.get_node("root"), false)
@@ -42,12 +45,12 @@ local function set_text(text)
 end
 
 function on_message(self, message_id, message, sender)
-    local layer = message.layer
     local data = message.data
     if message_id == hash("show") then
         gui.set_enabled(gui.get_node("root"), true)
-        --msg.post(sender, "nest", {node = gui.get_node("nested_hint")})
+        enabled = true
     elseif message_id == hash("update") then
+        local data = message.data
         if data.size then
             set_size(data.size)
         end
@@ -56,9 +59,19 @@ function on_message(self, message_id, message, sender)
         end
         set_text(data.text)
         set_position(data.pos)
+        layer = message.layer
+        source = sender
     elseif message_id == hash("hide") then
         gui.set_enabled(gui.get_node("root"), false)
     elseif message_id == hash("delete") then
         gui.delete_node(gui.get_node("root"))
+    end
+end
+
+function on_input(self, action_id, action)
+    if action_id == nil then
+        if gui.pick_node(gui.get_node("nested_hint"), action.x, action.y) and enabled then
+            msg.post(source, "nest", {layer = layer})
+        end
     end
 end
