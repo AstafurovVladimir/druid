@@ -42,16 +42,20 @@ local function set_text(text)
 end
 
 function on_message(self, message_id, message, sender)
+    local layer = message.layer
+    local data = message.data
     if message_id == hash("show") then
-        if message.size then
-            set_size(message.size)
-        end
-        if message.dynamic_height then
-            dynamic_height = message.dynamic_height
-        end
-        set_text(message.text)
-        set_position(message.pos)
         gui.set_enabled(gui.get_node("root"), true)
+        --msg.post(sender, "nest", {node = gui.get_node("nested_hint")})
+    elseif message_id == hash("update") then
+        if data.size then
+            set_size(data.size)
+        end
+        if data.dynamic_height then
+            dynamic_height = data.dynamic_height
+        end
+        set_text(data.text)
+        set_position(data.pos)
     elseif message_id == hash("hide") then
         gui.set_enabled(gui.get_node("root"), false)
     elseif message_id == hash("delete") then
