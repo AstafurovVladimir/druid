@@ -59,7 +59,6 @@ function on_message(self, message_id, message, sender)
     elseif message_id == hash("hide") then
         gui.set_enabled(gui.get_node("root"), false)
     elseif message_id == hash("delete") then
-        print(2)
         gui.delete_node(gui.get_node("root"))
     end
 end

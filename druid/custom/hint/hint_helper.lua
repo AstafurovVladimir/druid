@@ -26,7 +26,6 @@ function M.on_over(self, action_id, action, node, data)
                 table.insert(M.hints, collectionfactory.create("#hint_factory"))
                 msg.post(M.hints[i][hash("/hint")], "update", {layer = i, data = node})
             end
-            pprint(M.hints)
             msg.post(M.hints[1][hash("/hint")], "show")
             M.hint_is_show = true
             M.current_node_id = gui.get_id(node)
@@ -42,7 +41,6 @@ end
 
 function M.show_nest(self, level)
     msg.post(M.hints[level][hash("/hint")], "show")
-    print(1)
 end
 
 function M.final()
